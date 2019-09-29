@@ -21,7 +21,7 @@ int main() {
     open_file(out_file_path("io_simple_02"));
 
     //读取文件内容
-    read_file("read_text");
+    read_file("../resource/read_text");
 
     return 0;
 }
@@ -34,10 +34,13 @@ int main() {
  */
 void open_file(const char* file) {
 
+    print_line("open_file");
+
     //O_CREAT 文件不存在则创建
     //O_RDWR 读写文件
     //O_TRUNC 打开时将文件长度置为0，即读写会从0位置开始
-    int fd = open(file, O_CREAT | O_RDWR | O_TRUNC, 0666);
+    //O_CLOEXEC 子进程调用exce就关闭该fd,即"close-on-exec"
+    int fd = open(file, O_CREAT | O_RDWR | O_TRUNC | O_CLOEXEC, 0666);
     fchmod(fd, 0666);       //重新设置权限，open对已存在文件并不会修改其mode
 
     char buff[] = "open_file\n";
@@ -55,13 +58,13 @@ void open_file(const char* file) {
 }
 
 
-
-
 /**
  * 使用creat系统调用创建文件并写入信息
  * @param file 文件名
  */
 void create_file(const char* file) {
+
+    print_line("create_file");
 
     //存在则删除
     int exists = access(file,F_OK);
@@ -69,7 +72,6 @@ void create_file(const char* file) {
         remove(file);
     }
 
-    //creat等价于open(path, O_CREAT | O_TRUNC | O_WRONLY, mode)
     int fd = creat(file, 0666);
     char buff[] = "create_file\n";
     int result = write(fd, buff, strlen(buff));
@@ -91,20 +93,21 @@ void create_file(const char* file) {
  */
 void read_file(const char* file) {
 
+    print_line("read_file");
+
     int fd = open(file, O_RDONLY);
     if(fd < 0) {
         printf("%s", strerror(errno));
         return;
     }
 
-    int length = 10;
     int len = 0;
     int max = 0;
     int pos = 0;
     char* buff = NULL;
     for (;;) {
         if(pos >= max) {
-            max = max + length;     //不考虑溢出
+            max = max + 10;     //不考虑溢出
 
             //realloc:
             //  1.若第一个参数可为NULL则会开始分配一个地址
