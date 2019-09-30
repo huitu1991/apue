@@ -2,4 +2,4 @@
 
 #define out_file_path(path) BASE_OUT_DIR path
 
-#define print_line(name) printf("================================ %s ================================\n", name)
+#define print_line(name) printf("\n================================ %s ================================\n", name)

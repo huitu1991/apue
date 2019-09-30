@@ -1,6 +1,7 @@
 
 # 添加子目录
 ADD_SUBDIRECTORY(simple)
+ADD_SUBDIRECTORY(dup)
 
 # 复制read_text到目标二进制目录
 configure_file(
